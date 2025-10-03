@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Bem-Vindo ao freeCodeCamp Clone</title>
+</head>
+<body>
+    <h1>{{ mensagem }}</h1>
+    <p>Sua plataforma gratuita para aprender desenvolvimento web com Python.</p>
+    
+    <hr>
+    
+    <a href="{% url botao_url %}">
+        <button style="padding: 15px 30px; font-size: 18px; cursor: pointer; background-color: #008CBA; color: white; border: none;">
+            {{ botao_texto }}
+        </button>
+    </a>
+    
+    {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" 
+                    style="background: none; border: none; padding: 0; color: blue; text-decoration: underline; cursor: pointer; margin-top: 15px;">
+                Sair
+            </button>
+        </form>
+    {% endif %}
+</body>
+</html>

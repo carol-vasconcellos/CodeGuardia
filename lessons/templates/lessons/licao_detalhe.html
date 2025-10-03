@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>{{ licao.titulo }}</title>
+</head>
+<body>
+    <a href="{% url 'lessons:lista_licoes' %}">← Voltar para a lista</a>
+    <h1>{{ licao.titulo }}</h1>
+    
+    {% if sucesso %}
+        <h3 style="color: green;">✅ {{ licao.titulo }} CONCLUÍDA!</h3>
+        
+        <a href="{% url 'lessons:refazer_licao' slug=slug %}">
+            <button style="padding:10px; background-color:#ff9800; color:white; border:none; cursor:pointer; margin-top:10px; margin-bottom: 20px;">
+                Refazer Lição
+            </button>
+        </a>
+        <hr>
+    {% endif %}
+
+    {% if sucesso and proximo_slug %}
+        <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}">
+            <button style="padding: 10px 20px; font-size: 18px; background-color: blue; color: white; border: none; cursor: pointer; margin-bottom: 20px;">
+                Próxima Lição →
+            </button>
+        </a>
+        <hr>
+    {% endif %}
+
+
+    {% if licao.tipo == 'video' %}
+        
+        <div style="margin-bottom: 20px;">
+            <p><strong>{{ licao.conselho }}</strong></p>
+            <iframe 
+                width="800" 
+                height="450" 
+                src="{{ licao.url_video }}" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+        {% if not sucesso %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="marcar_concluida" style="padding: 10px 20px; background-color: green; color: white; border: none; cursor: pointer;">
+                    Marcar como concluída
+                </button>
+            </form>
+        {% endif %}
+
+    {% elif licao.tipo == 'codigo' %}
+    
+        <p><strong>Desafio:</strong> {{ licao.conselho }}</p>
+        
+        {% if not sucesso %}
+            <form method="post">
+                {% csrf_token %}
+                
+                <h2>Editor de Código</h2>
+                <textarea 
+                    name="codigo_editor" 
+                    rows="12" 
+                    cols="80" 
+                    style="font-family: monospace; background-color: #f0f0f0;"
+                >{{ codigo_usuario }}</textarea>
+                <br>
+                
+                <button type="submit" style="padding: 8px 15px; background-color: green; color: white; border: none; cursor: pointer;">
+                    Rodar Código e Testar
+                </button>
+            </form>
+        {% else %}
+             <p>Seu código original (salvo como concluído):</p>
+             <pre style="border: 1px solid #ccc; padding: 15px; background-color: #f0f0f0;">{{ codigo_usuario }}</pre>
+        {% endif %}
+        
+        <hr>
+        
+        <h2>Resultado do Console</h2>
+        <div id="console-output" style="border: 1px solid #ccc; padding: 15px; background-color: black; color: white;">
+            <pre>{{ output }}</pre>
+        </div>
+
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'lessons:lista_licoes' %}">Voltar para a lista de lições</a>
+    
+    
+<div id="successModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100;">
+    <div style="background-color:white; margin:15% auto; padding:20px; border-radius:10px; text-align:center; max-width:400px;">
+        <h2 style="color:green;">✨ CONGRATULATIONS! ✨</h2>
+        <p>Você completou a lição com sucesso!</p>
+        
+        {% if proximo_slug %}
+            <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}">
+                <button style="padding:10px; background-color:blue; color:white; border:none; cursor:pointer; margin-top:10px;">
+                    Próxima Lição →
+                </button>
+            </a>
+        {% endif %}
+        
+        <a href="{% url 'lessons:refazer_licao' slug=slug %}">
+            <button style="padding:10px; background-color:#ff9800; color:white; border:none; cursor:pointer; margin-top:10px; margin-left:10px;">
+                Refazer Lição
+            </button>
+        </a>
+    </div>
+</div>
+
+<div id="errorModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100;">
+    <div style="background-color:white; margin:15% auto; padding:20px; border-radius:10px; max-width:600px;">
+        <h2 style="color:red;">❌ Houve um Erro no Seu Código</h2>
+        
+        <p style="border:1px solid #f00; padding:10px; background-color: #ffe0e0;">
+            <strong>Dica Rápida:</strong> {{ dica_erro }}
+        </p>
+
+        <p>Se a dica não for suficiente, você pode buscar ajuda:</p>
+        
+        <a href="{{ forum_link }}" target="_blank">
+            <button style="padding:10px; background-color:orange; color:white; border:none; cursor:pointer;">
+                Postar Pergunta no Fórum
+            </button>
+        </a>
+        
+        <button onclick="document.getElementById('errorModal').style.display='none'" style="padding:10px; margin-left:10px; cursor:pointer;">
+            Voltar ao Código
+        </button>
+    </div>
+</div>
+
+<script>
+    // Função simples para simular confetes
+    function launchConfetti() {
+        const colors = ['#f0f', '#0ff', '#ff0', '#0f0'];
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.top = -10 + 'px';
+            confetti.style.opacity = Math.random();
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            confetti.style.transition = `top 1.5s ease-out, opacity 1s linear`;
+            document.body.appendChild(confetti);
+
+            setTimeout(() => {
+                confetti.style.top = window.innerHeight + 'px';
+                confetti.style.opacity = 0;
+            }, 50);
+
+            setTimeout(() => {
+                confetti.remove();
+            }, 2000);
+        }
+    }
+
+    // LÓGICA PRINCIPAL: Exibir o modal com base no feedback do Django
+    window.onload = function() {
+        const feedbackType = "{{ feedback_tipo }}"; // Pega a variável do views.py
+        
+        if (feedbackType === 'SUCESSO') {
+            document.getElementById('successModal').style.display = 'block';
+            launchConfetti(); // Lança os confetes no acerto
+        } else if (feedbackType === 'ERRO_SAIDA' || feedbackType === 'ERRO_CODIGO') {
+            document.getElementById('errorModal').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>

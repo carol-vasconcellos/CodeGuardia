@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Trilha de Aprendizado</title>
+</head>
+<body>
+    <h1>Trilha de Aprendizado</h1>
+    <h2>Lições Disponíveis</h2>
+    
+    <hr>
+    
+    <ul>
+        {% for slug, licao, concluida in licoes_status %}
+            <li>
+                <a href="{% url 'lessons:licao_detalhe' slug=licao.slug %}"> 
+                    {{ licao.ordem }}. {{ licao.titulo }} ({{ licao.get_tipo_display }})
+                    
+                    {% if concluida %}
+                        <strong style="color: green;">(CONCLUÍDA)</strong>
+                    {% endif %}
+                </a>
+            </li>
+        {% empty %}
+             <li>Nenhuma lição cadastrada. Por favor, adicione lições no Painel Admin.</li>
+        {% endfor %}
+    </ul>
+    
+    <hr>
+    <p><a href="{% url 'bem_vindo' %}">Voltar ao Painel</a></p> 
+    
+</body>
+</html>

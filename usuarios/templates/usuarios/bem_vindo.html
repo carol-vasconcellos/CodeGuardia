@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Painel do Aluno</title>
+</head>
+<body>
+    <h1>Painel do Aluno: Bem-vindo, {{ nome_usuario }}!</h1>
+    
+    <hr>
+    
+    <h2>Progresso Geral</h2>
+    <p>
+        Você concluiu <strong>{{ licoes_concluidas }}</strong> de <strong>{{ total_licoes }}</strong> lições.
+    </p>
+    
+    <div style="border: 1px solid #ccc; width: 400px; height: 20px;">
+        <div style="width: {{ porcentagem_progresso|floatformat:'0' }}%; height: 100%; background-color: #4CAF50; text-align: center; color: white;">
+            {{ porcentagem_progresso|floatformat:'0' }}%
+        </div>
+    </div>
+    
+    <hr>
+    
+    <h2>Sua Trilha</h2>
+    
+    <a href="{% url 'lessons:lista_licoes' %}">
+        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none;">
+            Acessar Todas as Lições →
+        </button>
+    </a>
+    
+    <h3 style="margin-top: 20px;">Status das Lições:</h3>
+    <ul>
+    {% for li in progresso_licoes %}
+        <li>
+            <a href="{% url 'lessons:licao_detalhe' slug=li.slug %}">
+                <strong>{{ li.titulo }}</strong> ({{ li.tipo }})
+            </a>
+            
+            {% if li.concluida %}
+                <span style="color: green; font-weight: bold;">[CONCLUÍDO] ✅</span>
+            {% else %}
+                <span style="color: red;">[PENDENTE] ⏳</span>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Nenhuma lição cadastrada ainda. Por favor, adicione conteúdo no Admin.</li>
+    {% endfor %}
+    </ul>
+    
+    <hr>
+    <p><a href="{% url 'logout' %}">Sair da Conta</a></p>
+</body>
+</html>
