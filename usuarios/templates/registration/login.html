@@ -1,17 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* Define a fonte Inter como padrão e configura a altura mínima para centralização */
+body {
+font-family: 'Inter', sans-serif;
+min-height: 100vh;
+}
+
+/* Estilos customizados para os campos do formulário */
+.login-form label {
+ display: block;
+ margin-bottom: 0.5rem;
+ font-weight: 500;
+color: #d1d5db; /* gray-300 */
+}
+ .login-form input[type="text"],
+.login-form input[type="password"] {
+ width: 100%;
+ padding: 0.75rem;
+ margin-bottom: 1rem;
+ border-radius: 0.5rem; /* rounded-lg */
+ background-color: #1f2937; /* gray-800 (mais escuro que o card) */
+border: 1px solid #374151; /* gray-700 */
+ color: #f3f4f6; /* gray-100 */
+ transition: all 0.2s;
+ }
+ .login-form input:focus {
+ border-color: #f97316; /* orange-600 */
+ outline: none;
+ box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.5); /* Sombra de foco laranja */
+ }
+ </style>
 </head>
-<body>
-    <h1>Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }} 
-        <button type="submit">Entrar</button>
-    </form>
-    
-    <hr>
-    <p>Não tem uma conta? <a href="{% url 'signup' %}">Crie uma agora</a>.</p>
+<!-- Corpo: Fundo preto, centralizado -->
+<body class="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen p-4">
+
+<!-- Card de Login Centralizado -->
+<div class="bg-gray-800 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
+ 
+<!-- Título -->
+ <h1 class="text-3xl font-extrabold text-white mb-6 border-b border-orange-600/50 pb-3 text-center">
+ Acessar <span class="text-orange-500">CodeGuardia</span>
+</h1>
+ 
+<!-- Formulário (Usando campos simulados para visualização) -->
+ <form method="post" class="login-form">
+
+ {% comment %} {% csrf_token %} {% endcomment %}
+<p>
+ <label for="id_username">Nome de usuário:</label>
+ <input type="text" name="username" id="id_username" placeholder="Seu nome de usuário ou email">
+ </p>
+ <p>
+ <label for="id_password">Senha:</label>
+ <input type="password" name="password" id="id_password" placeholder="Sua senha secreta">
+ </p>
+ 
+ <!-- O LINK PARA RECUPERAÇÃO DE SENHA JÁ ESTÁ CORRETO -->
+ <div class="text-right text-sm mb-4">
+<a href="{% url 'password_reset' %}" class="text-gray-400 hover:text-orange-500 transition duration-300">
+ Esqueceu sua senha?
+ </a>
+
+ <!-- Botão Entrar -->
+ <button type="submit" 
+ class="w-full py-3 font-bold text-lg bg-orange-600 text-white rounded-lg shadow-lg 
+ shadow-orange-600/30 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01]">
+ Entrar
+ </button>
+ </form>
+ 
+ <!-- Rodapé e Link de Cadastro -->
+ <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
+ <p>
+ Não tem uma conta? 
+ <!-- Link de cadastro -->
+ <a href="{% url 'signup' %}" class="text-orange-400 font-semibold hover:text-orange-500 transition duration-300">
+ Crie uma agora →
+</a>
+ </p>
+</div>
+ </div>
+ 
 </body>
 </html>

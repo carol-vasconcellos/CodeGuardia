@@ -1,19 +1,21 @@
-# [Seu Projeto]/urls.py (o arquivo principal)
+# Seu urls.py principal
 
 from django.contrib import admin
 from django.urls import path, include
-# REMOVA: from django.views.generic.base import RedirectView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # Rotas de AUTENTICAÇÃO do Django (login, logout, etc.)
-    path('accounts/', include('django.contrib.auth.urls')),
-    
-    # 🌟 CORREÇÃO 1: A rota raiz ('') agora inclui 'usuarios.urls'. 
-    # O app 'usuarios' decidirá o que mostrar na raiz.
+    # 1. Rotas do seu App 'usuarios' (inclui todas as suas views customizadas,
+    #    incluindo o fluxo de password reset customizado na raiz /password_reset/)
     path('', include('usuarios.urls')), 
     
-    # Rotas do seu app 'lessons'
+    # 2. Rotas do seu App 'lessons'
     path('licoes/', include('lessons.urls')), 
+    
+    # 3. Mantenha a inclusão padrão APENAS se você precisar de outras rotas
+    #    de autenticação que você NÃO definiu no 'usuarios.urls'
+    #    (Ex: logout/, password_change/, se não estiverem em 'usuarios')
+    #    Caso contrário, remova.
+    #    path('accounts/', include('django.contrib.auth.urls')), 
 ]

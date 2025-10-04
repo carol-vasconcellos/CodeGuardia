@@ -1,22 +1,87 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>Criar Conta</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | CodeGuardia</title>
+    <!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Estiliza os campos de formulário gerados pelo Django para o tema escuro */
+        .form-fields input,
+        .form-fields label {
+            display: block;
+            width: 100%;
+        }
+        .form-fields p {
+            margin-bottom: 1rem;
+        }
+        .form-fields label {
+            color: #d1d5db; /* gray-300 */
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .form-fields input {
+            padding: 0.75rem;
+            background-color: #1f2937; /* gray-800 */
+            border: 1px solid #374151; /* gray-700 */
+            border-radius: 0.5rem;
+            color: #f3f4f6; /* gray-100 */
+            transition: all 0.2s;
+        }
+        .form-fields input:focus {
+            border-color: #f97316; /* orange-600 */
+            box-shadow: 0 0 0 1px #f97316;
+            outline: none;
+        }
+    </style>
 </head>
-<body>
-    <h1>Crie sua Conta</h1>
-    
-    <form method="post">
-        {% csrf_token %}
+<!-- Corpo Principal: Fundo quase preto (900) e centrado -->
+<body class="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Card de Registro Centralizado -->
+    <div class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-2xl border border-gray-700">
         
-        {{ form.as_p }} 
+        <!-- Título Principal -->
+        <h1 class="text-3xl font-extrabold text-white text-center mb-2">
+            Crie sua <span class="text-orange-500">Conta</span>
+        </h1>
+        <p class="text-center text-gray-400 mb-8">
+            Comece sua jornada de aprendizado agora!
+        </p>
         
-        <button type="submit" style="padding: 10px; background-color: green; color: white; border: none; cursor: pointer;">
-            Registrar
-        </button>
-    </form>
-    
-    <hr>
-    <p>Já tem uma conta? <a href="{% url 'login' %}">Faça login aqui</a>.</p>
+        <!-- Formulário -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Os campos do formulário Django são envolvidos por esta div para aplicar o CSS -->
+            <div class="form-fields space-y-4">
+                {{ form.as_p }} 
+            </div>
+            
+            <!-- Botão de Registro - Laranja Vibrante -->
+            <button type="submit" 
+                    class="w-full mt-6 px-4 py-3 text-lg font-bold bg-orange-600 text-white rounded-lg shadow-lg 
+                           shadow-orange-600/50 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01]">
+                Registrar
+            </button>
+        </form>
+        
+        <!-- Link para Login -->
+        <div class="mt-8 text-center pt-4 border-t border-gray-700">
+            <p class="text-gray-400 text-sm">
+                Já tem uma conta? 
+                <a href="{% url 'login' %}" class="text-orange-400 hover:text-orange-300 font-semibold transition duration-300">
+                    Faça login aqui
+                </a>.
+            </p>
+        </div>
+        
+    </div>
 </body>
 </html>

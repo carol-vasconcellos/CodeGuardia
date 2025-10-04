@@ -1,178 +1,280 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>{{ licao.titulo }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ licao.titulo }} | Detalhe</title>
+    <!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Torna o iframe do vídeo responsivo */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
-<body>
-    <a href="{% url 'lessons:lista_licoes' %}">← Voltar para a lista</a>
-    <h1>{{ licao.titulo }}</h1>
-    
-    {% if sucesso %}
-        <h3 style="color: green;">✅ {{ licao.titulo }} CONCLUÍDA!</h3>
+<!-- Corpo Principal: Fundo quase preto (900) e texto suave (100) -->
+<body class="bg-gray-900 text-gray-100 p-4 sm:p-8">
+
+    <!-- Container centralizado e responsivo -->
+    <div class="max-w-4xl mx-auto">
         
-        <a href="{% url 'lessons:refazer_licao' slug=slug %}">
-            <button style="padding:10px; background-color:#ff9800; color:white; border:none; cursor:pointer; margin-top:10px; margin-bottom: 20px;">
-                Refazer Lição
-            </button>
+        <!-- Link Voltar -->
+        <a href="{% url 'lessons:lista_licoes' %}" class="flex items-center text-gray-400 hover:text-orange-500 transition duration-300 mb-6 group">
+            <svg class="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Voltar para a lista
         </a>
-        <hr>
-    {% endif %}
 
-    {% if sucesso and proximo_slug %}
-        <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}">
-            <button style="padding: 10px 20px; font-size: 18px; background-color: blue; color: white; border: none; cursor: pointer; margin-bottom: 20px;">
-                Próxima Lição →
-            </button>
-        </a>
-        <hr>
-    {% endif %}
-
-
-    {% if licao.tipo == 'video' %}
+        <!-- Título Principal -->
+        <h1 class="text-4xl font-extrabold text-white mb-6 border-b border-orange-600/50 pb-2">{{ licao.titulo }}</h1>
         
-        <div style="margin-bottom: 20px;">
-            <p><strong>{{ licao.conselho }}</strong></p>
-            <iframe 
-                width="800" 
-                height="450" 
-                src="{{ licao.url_video }}" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
-        </div>
-        
-        {% if not sucesso %}
-            <form method="post">
-                {% csrf_token %}
-                <button type="submit" name="marcar_concluida" style="padding: 10px 20px; background-color: green; color: white; border: none; cursor: pointer;">
-                    Marcar como concluída
-                </button>
-            </form>
-        {% endif %}
-
-    {% elif licao.tipo == 'codigo' %}
-    
-        <p><strong>Desafio:</strong> {{ licao.conselho }}</p>
-        
-        {% if not sucesso %}
-            <form method="post">
-                {% csrf_token %}
+        <!-- Feedback de Sucesso - Destaque em verde neon no fundo escuro -->
+        {% if sucesso %}
+            <div class="bg-green-900/50 border border-green-600 rounded-xl p-4 mb-8 shadow-2xl shadow-green-900/40">
+                <h3 class="text-xl font-semibold text-green-400 flex items-center">
+                    <span class="mr-2 text-2xl">🚀</span> {{ licao.titulo }} CONCLUÍDA!
+                </h3>
                 
-                <h2>Editor de Código</h2>
-                <textarea 
-                    name="codigo_editor" 
-                    rows="12" 
-                    cols="80" 
-                    style="font-family: monospace; background-color: #f0f0f0;"
-                >{{ codigo_usuario }}</textarea>
-                <br>
-                
-                <button type="submit" style="padding: 8px 15px; background-color: green; color: white; border: none; cursor: pointer;">
-                    Rodar Código e Testar
-                </button>
-            </form>
-        {% else %}
-             <p>Seu código original (salvo como concluído):</p>
-             <pre style="border: 1px solid #ccc; padding: 15px; background-color: #f0f0f0;">{{ codigo_usuario }}</pre>
+                <div class="mt-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                    <!-- Botão Refazer -->
+                    <a href="{% url 'lessons:refazer_licao' slug=slug %}">
+                        <button class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-orange-400 border border-orange-600 rounded-lg hover:bg-orange-900/50 transition duration-300">
+                            Refazer Lição
+                        </button>
+                    </a>
+
+                    <!-- Botão Próxima Lição (somente se houver próxima) -->
+                    {% if proximo_slug %}
+                        <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}">
+                            <button class="w-full sm:w-auto px-6 py-3 text-lg font-bold bg-orange-600 text-white rounded-lg shadow-lg shadow-orange-600/40 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.02]">
+                                Próxima Lição →
+                            </button>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         {% endif %}
         
-        <hr>
+        <!-- Seção de Conteúdo da Lição -->
         
-        <h2>Resultado do Console</h2>
-        <div id="console-output" style="border: 1px solid #ccc; padding: 15px; background-color: black; color: white;">
-            <pre>{{ output }}</pre>
-        </div>
+        {% if licao.tipo == 'video' %}
+            
+            <div class="mb-8 p-6 bg-gray-800 rounded-xl shadow-lg">
+                <p class="text-lg font-light italic text-orange-400 mb-4">
+                    <span class="font-bold not-italic">🎯 Desafio:</span> {{ licao.conselho }}
+                </p>
+                
+                <!-- Container Responsivo para o Vídeo -->
+                <div class="video-container">
+                    <iframe 
+                        src="{{ licao.url_video }}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            
+            {% if not sucesso %}
+                <!-- Botão Marcar como Concluída - Destaque forte em verde -->
+                <form method="post" class="mt-8">
+                    {% csrf_token %}
+                    <button type="submit" name="marcar_concluida" 
+                        class="w-full px-8 py-4 text-xl font-bold bg-green-600 text-white rounded-lg shadow-xl shadow-green-600/30 hover:bg-green-500 transition duration-300 transform hover:scale-[1.01]">
+                        <span class="mr-2">✅</span> Marcar como concluída
+                    </button>
+                </form>
+            {% endif %}
 
-    {% endif %}
-
-    <hr>
-    <a href="{% url 'lessons:lista_licoes' %}">Voltar para a lista de lições</a>
-    
-    
-<div id="successModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100;">
-    <div style="background-color:white; margin:15% auto; padding:20px; border-radius:10px; text-align:center; max-width:400px;">
-        <h2 style="color:green;">✨ CONGRATULATIONS! ✨</h2>
-        <p>Você completou a lição com sucesso!</p>
+        {% elif licao.tipo == 'codigo' %}
         
-        {% if proximo_slug %}
-            <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}">
-                <button style="padding:10px; background-color:blue; color:white; border:none; cursor:pointer; margin-top:10px;">
-                    Próxima Lição →
-                </button>
+            <div class="mb-6 p-6 bg-gray-800 rounded-xl shadow-lg">
+                <p class="text-lg font-light italic text-orange-400 mb-4">
+                    <span class="font-bold not-italic">🎯 Desafio:</span> {{ licao.conselho }}
+                </p>
+                
+                {% if not sucesso %}
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h2 class="text-2xl font-semibold text-white mb-3">Editor de Código</h2>
+                        <!-- Textarea de Código - Estilo de IDE Dark Mode -->
+                        <textarea 
+                            name="codigo_editor" 
+                            rows="12" 
+                            class="w-full p-4 text-sm font-mono bg-gray-900 text-green-400 border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-y"
+                        >{{ codigo_usuario }}</textarea>
+                        <br>
+                        
+                        <!-- Botão de Ação - Destaque em laranja -->
+                        <button type="submit" 
+                            class="mt-4 px-6 py-3 font-semibold bg-orange-600 text-white rounded-lg shadow-md shadow-orange-600/30 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01]">
+                            <span class="mr-1">▶️</span> Rodar Código e Testar
+                        </button>
+                    </form>
+                {% else %}
+                    <h2 class="text-2xl font-semibold text-white mb-3">Seu Código Concluído</h2>
+                    <p class="text-gray-400 mb-3">Seu código original (salvo como concluído):</p>
+                    <!-- Preformatted Code Block - Estilo de IDE Dark Mode -->
+                    <pre class="p-4 bg-gray-900 text-green-400 border border-gray-700 rounded-lg overflow-x-auto text-sm font-mono">{{ codigo_usuario }}</pre>
+                {% endif %}
+            </div>
+            
+            <!-- Resultado do Console -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold text-white mb-3 flex items-center">
+                    <span class="mr-2 text-orange-500">💻</span> Console Output
+                </h2>
+                <!-- Console Output - Fundo preto puro para simular terminal -->
+                <div id="console-output" class="p-4 bg-black text-gray-200 border border-gray-700 rounded-lg shadow-xl font-mono text-sm overflow-x-auto">
+                    <pre class="whitespace-pre-wrap">{{ output }}</pre>
+                </div>
+            </div>
+
+        {% endif %}
+
+        <div class="mt-10 pt-6 border-t border-gray-700">
+            <a href="{% url 'lessons:lista_licoes' %}" class="text-gray-400 hover:text-orange-500 transition duration-300">
+                ← Voltar para a lista de lições
             </a>
-        {% endif %}
+        </div>
         
-        <a href="{% url 'lessons:refazer_licao' slug=slug %}">
-            <button style="padding:10px; background-color:#ff9800; color:white; border:none; cursor:pointer; margin-top:10px; margin-left:10px;">
-                Refazer Lição
-            </button>
-        </a>
+    </div> <!-- Fim do Container Principal -->
+
+
+    <!-- Modals (Estilo moderno, alto contraste) -->
+
+    <!-- Modal de Sucesso -->
+    <div id="successModal" class="fixed inset-0 z-50 bg-gray-900/90 flex items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border-2 border-green-600/50 text-center max-w-sm w-full animate-pulse-once">
+            <div class="text-5xl mb-4">🎉</div>
+            <h2 class="text-3xl font-extrabold text-green-400 mb-2">Lição Concluída!</h2>
+            <p class="text-gray-300 mb-6">Parabéns! Você completou esta etapa com sucesso.</p>
+            
+            <div class="space-y-3">
+                {% if proximo_slug %}
+                    <!-- Botão Próxima Lição - Destaque principal -->
+                    <a href="{% url 'lessons:licao_detalhe' slug=proximo_slug %}" class="block">
+                        <button class="w-full px-6 py-3 font-bold bg-orange-600 text-white rounded-lg shadow-lg hover:bg-orange-500 transition duration-300">
+                            Próxima Lição →
+                        </button>
+                    </a>
+                {% endif %}
+                
+                <!-- Botão Refazer Lição - Secundário -->
+                <a href="{% url 'lessons:refazer_licao' slug=slug %}" class="block">
+                    <button class="w-full px-6 py-3 text-sm font-medium text-gray-300 border border-gray-600 rounded-lg hover:bg-gray-700 transition duration-300">
+                        Refazer Lição
+                    </button>
+                </a>
+            </div>
+        </div>
     </div>
-</div>
 
-<div id="errorModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100;">
-    <div style="background-color:white; margin:15% auto; padding:20px; border-radius:10px; max-width:600px;">
-        <h2 style="color:red;">❌ Houve um Erro no Seu Código</h2>
-        
-        <p style="border:1px solid #f00; padding:10px; background-color: #ffe0e0;">
-            <strong>Dica Rápida:</strong> {{ dica_erro }}
-        </p>
+    <!-- Modal de Erro -->
+    <div id="errorModal" class="fixed inset-0 z-50 bg-gray-900/90 flex items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border-2 border-red-600/50 max-w-lg w-full">
+            <h2 class="text-3xl font-extrabold text-red-400 mb-4 flex items-center">
+                <span class="mr-2 text-4xl">🚨</span> Erro no Seu Código
+            </h2>
+            
+            <!-- Dica de Erro (Fundo sutil, texto laranja) -->
+            <div class="p-4 mb-6 bg-red-900/50 border border-red-700 rounded-lg">
+                <p class="font-semibold text-orange-400">Dica Rápida:</p>
+                <p class="text-gray-200 mt-1">{{ dica_erro }}</p>
+            </div>
 
-        <p>Se a dica não for suficiente, você pode buscar ajuda:</p>
-        
-        <a href="{{ forum_link }}" target="_blank">
-            <button style="padding:10px; background-color:orange; color:white; border:none; cursor:pointer;">
-                Postar Pergunta no Fórum
-            </button>
-        </a>
-        
-        <button onclick="document.getElementById('errorModal').style.display='none'" style="padding:10px; margin-left:10px; cursor:pointer;">
-            Voltar ao Código
-        </button>
+            <p class="text-gray-300 mb-6">Se a dica não for suficiente, você pode buscar ajuda:</p>
+            
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <!-- Botão Fórum - Destaque em laranja -->
+                <a href="{{ forum_link }}" target="_blank" class="flex-1">
+                    <button class="w-full px-6 py-3 font-semibold bg-orange-600 text-white rounded-lg shadow-md hover:bg-orange-500 transition duration-300">
+                        Postar Pergunta no Fórum
+                    </button>
+                </a>
+                
+                <!-- Botão Voltar - Secundário -->
+                <button onclick="document.getElementById('errorModal').classList.add('hidden')" 
+                    class="flex-1 px-6 py-3 font-medium text-gray-300 border border-gray-600 rounded-lg hover:bg-gray-700 transition duration-300">
+                    Voltar ao Código
+                </button>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    // Função simples para simular confetes
-    function launchConfetti() {
-        const colors = ['#f0f', '#0ff', '#ff0', '#0f0'];
-        for (let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.style.position = 'fixed';
-            confetti.style.width = '10px';
-            confetti.style.height = '10px';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.left = Math.random() * window.innerWidth + 'px';
-            confetti.style.top = -10 + 'px';
-            confetti.style.opacity = Math.random();
-            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-            confetti.style.transition = `top 1.5s ease-out, opacity 1s linear`;
-            document.body.appendChild(confetti);
+    <!-- Linha divisória para o rodapé (FORA do container principal) -->
+    <div class="mt-12 pt-6 border-t border-gray-700 text-center">
+        <p class="text-gray-500 text-sm">© 2025 CodeGuardia. Todos os direitos reservados.</p>
+    </div>
 
-            setTimeout(() => {
-                confetti.style.top = window.innerHeight + 'px';
-                confetti.style.opacity = 0;
-            }, 50);
 
-            setTimeout(() => {
-                confetti.remove();
-            }, 2000);
+    <script>
+        // Função simples para simular confetes
+        function launchConfetti() {
+            const colors = ['#f97316', '#fb923c', '#fed7aa', '#4ade80']; // Tons de Laranja e um verde de sucesso
+            const container = document.body;
+            
+            for (let i = 0; i < 70; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('absolute', 'w-3', 'h-3', 'rounded-full', 'shadow-lg');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Posição aleatória na parte superior da tela
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -50 + 'px';
+                confetti.style.opacity = Math.random() + 0.5;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Animação CSS para queda e rotação
+                confetti.style.transition = `top ${1.5 + Math.random()}s ease-in, opacity ${0.8 + Math.random()}s ease-out, transform ${2 + Math.random()}s ease-in-out`;
+                
+                container.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.style.top = '100vh';
+                    confetti.style.opacity = 0;
+                }, 50 + i * 5); // Pequeno delay entre os confetes
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
         }
-    }
 
-    // LÓGICA PRINCIPAL: Exibir o modal com base no feedback do Django
-    window.onload = function() {
-        const feedbackType = "{{ feedback_tipo }}"; // Pega a variável do views.py
-        
-        if (feedbackType === 'SUCESSO') {
-            document.getElementById('successModal').style.display = 'block';
-            launchConfetti(); // Lança os confetes no acerto
-        } else if (feedbackType === 'ERRO_SAIDA' || feedbackType === 'ERRO_CODIGO') {
-            document.getElementById('errorModal').style.display = 'block';
+        // LÓGICA PRINCIPAL: Exibir o modal com base no feedback do Django
+        window.onload = function() {
+            const successModal = document.getElementById('successModal');
+            const errorModal = document.getElementById('errorModal');
+            
+            // Variável de feedback, deve ser fornecida pelo seu backend Django
+            const feedbackType = "{{ feedback_tipo }}";
+            
+            if (feedbackType === 'SUCESSO') {
+                successModal.classList.remove('hidden');
+                launchConfetti(); // Lança os confetes no acerto
+            } else if (feedbackType === 'ERRO_SAIDA' || feedbackType === 'ERRO_CODIGO') {
+                errorModal.classList.remove('hidden');
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>

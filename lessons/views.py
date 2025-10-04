@@ -1,29 +1,17 @@
-# lessons/views.py (CÓDIGO FINAL E COMPLETO LENDO DO BANCO DE DADOS)
+# lessons/views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Licao # Importa o Model Licao do banco de dados
+from .models import Licao 
 import io
 import sys
 
-# 🚨 IMPORTANTE: O DICIONÁRIO ESTATICO 'LICOES' FOI REMOVIDO DE PROPÓSITO.
-# O sistema agora usa Licao.objects.all().
+# 🌟 CORREÇÃO: Importa funções do lessons.utils.py (ENDEREÇO CORRETO E SEM CIRCULAR)
+from .utils import get_progress_data, set_lesson_completed, is_lesson_completed, set_lesson_pending
 
 # -------------------------------------------------------------
-# FUNÇÕES AUXILIARES DE SESSÃO E NAVEGAÇÃO (USAM MODEL)
+# FUNÇÕES AUXILIARES DE NAVEGAÇÃO
 # -------------------------------------------------------------
-
-def set_lesson_completed(request, slug):
-    """Marca uma lição como concluída na sessão do usuário."""
-    if 'completed_lessons' not in request.session:
-        request.session['completed_lessons'] = []
-    if slug not in request.session['completed_lessons']:
-        request.session['completed_lessons'].append(slug)
-        request.session.modified = True 
-
-def is_lesson_completed(request, slug):
-    """Verifica se a lição está concluída."""
-    return slug in request.session.get('completed_lessons', [])
 
 def get_next_slug(current_slug):
     """Busca o slug da próxima lição no banco de dados pela ordem."""
@@ -36,72 +24,39 @@ def get_next_slug(current_slug):
         pass
     return None
 
-# Função para o Painel do Aluno (usuários/views.py chama esta)
-def get_progress_data_from_db(request):
-    """Calcula o progresso lendo do Banco de Dados."""
-    licoes_db = Licao.objects.all().order_by('ordem')
-    total_licoes = licoes_db.count()
-    licoes_concluidas = 0
-    progresso = []
-
-    for licao in licoes_db:
-        concluida = is_lesson_completed(request, licao.slug)
-        if concluida:
-            licoes_concluidas += 1
-        
-        progresso.append({
-            'titulo': licao.titulo,
-            'slug': licao.slug,
-            'tipo': licao.get_tipo_display(), # Usa método do Model
-            'concluida': concluida,
-        })
-    
-    porcentagem_progresso = 0
-    if total_licoes > 0:
-        porcentagem_progresso = round((licoes_concluidas / total_licoes) * 100)
-    
-    return {
-        'progresso_licoes': progresso,
-        'total_licoes': total_licoes,
-        'licoes_concluidas': licoes_concluidas,
-        'porcentagem_progresso': porcentagem_progresso,
-    }
-
 # -------------------------------------------------------------
-# 1. VIEW PARA LISTAR AS LIÇÕES (LÊ DO BANCO)
+# 1. VIEW PARA LISTAR AS LIÇÕES
 # -------------------------------------------------------------
 
 @login_required
 def lista_licoes(request):
-    # LÊ TODAS AS LIÇÕES DO BANCO, ORDENADAS PELA ORDEM
+    user = request.user
     licoes_db = Licao.objects.all().order_by('ordem')
     
     licoes_status = [
-        (licao.slug, licao, is_lesson_completed(request, licao.slug))
+        # Passa o user e o objeto licao para a função do utils
+        (licao.slug, licao, is_lesson_completed(user, licao))
         for licao in licoes_db
     ]
     return render(request, 'lessons/lista_licoes.html', {'licoes_status': licoes_status})
 
 
 # -------------------------------------------------------------
-# 2. DETALHE DA LIÇÃO (LÊ DO BANCO)
+# 2. DETALHE DA LIÇÃO
 # -------------------------------------------------------------
-
-# lessons/views.py (FUNÇÃO licao_detalhe CORRIGIDA)
 
 @login_required
 def licao_detalhe(request, slug):
-    # BUSCA A LIÇÃO NO BANCO DE DADOS
+    user = request.user 
     licao = get_object_or_404(Licao, slug=slug)
     
-    # 🌟 Mapeamento de variáveis simplificado e direto para o Model 🌟
     tipo_licao = licao.tipo 
     codigo_padrao_db = licao.codigo_padrao if licao.codigo_padrao else ""
-    esperado_db = licao.esperado if licao.esperado else "" # Campo esperado do Model
-    conselho_db = licao.conselho if licao.conselho else "" # Campo conselho (para dicas)
+    esperado_db = licao.esperado if licao.esperado else "" 
+    conselho_db = licao.conselho if licao.conselho else "" 
     
     output = ""
-    sucesso = is_lesson_completed(request, slug) 
+    sucesso = is_lesson_completed(user, licao) # LÊ DO DB
     dica_erro = None
     feedback_tipo = None
     codigo_usuario = codigo_padrao_db
@@ -110,7 +65,7 @@ def licao_detalhe(request, slug):
         
         # A. Lição de vídeo
         if tipo_licao == 'video' and 'marcar_concluida' in request.POST:
-            set_lesson_completed(request, slug)
+            set_lesson_completed(user, licao) # SALVA NO DB
             return redirect('lessons:licao_detalhe', slug=slug) 
         
         # B. Lição de código
@@ -125,14 +80,14 @@ def licao_detalhe(request, slug):
                 exec(codigo_usuario, {}, {})
                 output = redirected_output.getvalue()
                 
-                if output == esperado:
-                    set_lesson_completed(request, slug) 
+                if output.strip() == esperado.strip():
+                    set_lesson_completed(user, licao) # SALVA NO DB
                     sucesso = True
                     feedback_tipo = 'SUCESSO'
                     output = "✅ Parabéns! Você concluiu esta lição! 🎉"
                 else:
                     feedback_tipo = 'ERRO_SAIDA'
-                    dica_erro = conselho_db # Usa o campo conselho como dica
+                    dica_erro = conselho_db
                     output = f"Sua Saída:\n{output}\n---\nSaída Esperada:\n{esperado}"
                     
             except Exception as e:
@@ -144,11 +99,12 @@ def licao_detalhe(request, slug):
                 sys.stdout = old_stdout
             
     if request.method == 'GET' and tipo_licao == 'codigo':
-        codigo_usuario = codigo_padrao_db
+        if not sucesso:
+            codigo_usuario = codigo_padrao_db
 
     context = {
         'slug': slug,
-        'licao': licao, # O template usa licao.url_video|safe
+        'licao': licao, 
         'codigo_usuario': codigo_usuario,
         'output': output,
         'sucesso': sucesso,
@@ -161,15 +117,14 @@ def licao_detalhe(request, slug):
 
 
 # -------------------------------------------------------------
-# 3. REFAZER LIÇÃO (MANTIDA)
+# 3. REFAZER LIÇÃO
 # -------------------------------------------------------------
 
 @login_required
 def refazer_licao(request, slug):
-    """Remove a lição da lista de concluídas na sessão e redireciona."""
-    if 'completed_lessons' in request.session:
-        request.session['completed_lessons'] = [
-            s for s in request.session['completed_lessons'] if s != slug
-        ]
-        request.session.modified = True
+    user = request.user
+    licao = get_object_or_404(Licao, slug=slug)
+    
+    set_lesson_pending(user, licao) # Reseta no DB
+    
     return redirect('lessons:licao_detalhe', slug=slug)

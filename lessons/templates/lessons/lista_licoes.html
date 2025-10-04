@@ -1,32 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trilha de Aprendizado</title>
+    <!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Garantindo que o link do CTA de Voltar fique bem estilizado */
+        .back-link-btn:hover svg {
+            transform: translateX(-3px);
+            transition: transform 0.2s;
+        }
+    </style>
 </head>
-<body>
-    <h1>Trilha de Aprendizado</h1>
-    <h2>Lições Disponíveis</h2>
-    
-    <hr>
-    
-    <ul>
-        {% for slug, licao, concluida in licoes_status %}
-            <li>
-                <a href="{% url 'lessons:licao_detalhe' slug=licao.slug %}"> 
-                    {{ licao.ordem }}. {{ licao.titulo }} ({{ licao.get_tipo_display }})
+<!-- Corpo Principal: Fundo quase preto (900) e texto suave (100) -->
+<body class="bg-gray-900 text-gray-100 p-4 sm:p-8">
+
+    <!-- Container centralizado e responsivo -->
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- Link de Voltar ao Painel (Topo) -->
+        <div class="mb-6">
+            <a href="{% url 'bem_vindo' %}" 
+               class="text-gray-400 hover:text-orange-500 transition duration-300 flex items-center back-link-btn text-sm font-medium">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Voltar ao Painel
+            </a>
+        </div>
+        
+        <!-- Título Principal da Trilha -->
+        <h1 class="text-4xl font-extrabold text-white mb-2">Trilha de Aprendizado</h1>
+        <h2 class="text-2xl font-semibold text-orange-500 mb-8 border-b border-gray-700 pb-3">Lições Disponíveis</h2>
+        
+        <!-- Grid de Cards de Lições -->
+        <div class="space-y-4">
+            {% for slug, licao, concluida in licoes_status %}
+                <!-- Card de Lição -->
+                <a href="{% url 'lessons:licao_detalhe' slug=licao.slug %}" 
+                   class="block p-5 bg-gray-800 rounded-xl shadow-lg border border-gray-700 
+                          hover:bg-gray-700 transition duration-300 transform hover:scale-[1.01] focus:ring-2 focus:ring-orange-500">
                     
-                    {% if concluida %}
-                        <strong style="color: green;">(CONCLUÍDA)</strong>
-                    {% endif %}
+                    <div class="flex items-center justify-between">
+                        <!-- Título e Tipo da Lição -->
+                        <div class="flex-1 min-w-0 flex items-center">
+                            <span class="text-md font-medium text-orange-500 mr-3 w-5">{{ licao.ordem }}.</span>
+                            <h3 class="text-xl font-bold text-white truncate inline-block mr-4">{{ licao.titulo }}</h3>
+                            
+                            <!-- Indicador de Tipo de Lição (pequeno badge) -->
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                        {% if licao.tipo == 'video' %}bg-blue-900/50 text-blue-400 border border-blue-600/50
+                                        {% elif licao.tipo == 'codigo' %}bg-yellow-900/50 text-yellow-400 border border-yellow-600/50
+                                        {% else %}bg-gray-700 text-gray-400{% endif %} flex-shrink-0">
+                                {{ licao.get_tipo_display }}
+                            </span>
+                        </div>
+                        
+                        <!-- Status de Conclusão (lado direito) -->
+                        {% if concluida %}
+                            <div class="ml-4 flex-shrink-0">
+                                <span class="px-3 py-1 text-sm font-bold text-green-400 bg-green-900/50 rounded-full border border-green-600">
+                                    ✅ CONCLUÍDA
+                                </span>
+                            </div>
+                        {% else %}
+                            <div class="ml-4 flex-shrink-0">
+                                <span class="px-3 py-1 text-sm font-medium text-orange-400 bg-orange-900/30 rounded-full border border-orange-600/50">
+                                    Pendente
+                                </span>
+                            </div>
+                        {% endif %}
+                    </div>
                 </a>
-            </li>
-        {% empty %}
-             <li>Nenhuma lição cadastrada. Por favor, adicione lições no Painel Admin.</li>
-        {% endfor %}
-    </ul>
+            {% empty %}
+                <!-- Mensagem quando não há lições -->
+                <div class="p-6 bg-gray-800 rounded-xl border border-gray-700 text-center">
+                    <p class="text-gray-400">Nenhuma lição cadastrada. Por favor, adicione lições no Painel Admin.</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div> 
     
-    <hr>
-    <p><a href="{% url 'bem_vindo' %}">Voltar ao Painel</a></p> 
-    
+    <!-- Rodapé e Direitos Autorais -->
+    <div class="mt-12 pt-6 border-t border-gray-700 text-center max-w-4xl mx-auto">
+        <p class="text-gray-500 text-sm">© 2025 CodeGuardia. Todos os direitos reservados.</p>
+    </div>
+
 </body>
 </html>

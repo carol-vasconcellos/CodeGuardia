@@ -1,54 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>Painel do Aluno</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Aluno | {{ nome_usuario }}</title>
+    <!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+    </style>
 </head>
-<body>
-    <h1>Painel do Aluno: Bem-vindo, {{ nome_usuario }}!</h1>
-    
-    <hr>
-    
-    <h2>Progresso Geral</h2>
-    <p>
-        Você concluiu <strong>{{ licoes_concluidas }}</strong> de <strong>{{ total_licoes }}</strong> lições.
-    </p>
-    
-    <div style="border: 1px solid #ccc; width: 400px; height: 20px;">
-        <div style="width: {{ porcentagem_progresso|floatformat:'0' }}%; height: 100%; background-color: #4CAF50; text-align: center; color: white;">
-            {{ porcentagem_progresso|floatformat:'0' }}%
-        </div>
-    </div>
-    
-    <hr>
-    
-    <h2>Sua Trilha</h2>
-    
-    <a href="{% url 'lessons:lista_licoes' %}">
-        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none;">
-            Acessar Todas as Lições →
-        </button>
-    </a>
-    
-    <h3 style="margin-top: 20px;">Status das Lições:</h3>
-    <ul>
-    {% for li in progresso_licoes %}
-        <li>
-            <a href="{% url 'lessons:licao_detalhe' slug=li.slug %}">
-                <strong>{{ li.titulo }}</strong> ({{ li.tipo }})
+<!-- Corpo Principal: Fundo quase preto (900) e texto suave (100) -->
+<body class="bg-gray-900 text-gray-100 p-4 sm:p-8">
+
+    <!-- Container centralizado e responsivo -->
+    <div class="max-w-5xl mx-auto">
+        
+        <!-- Header e Logout -->
+        <header class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white">
+                Dashboard, <span class="text-orange-500">{{ nome_usuario }}</span>!
+            </h1>
+            <!-- Link Sair: Adicionado campo 'next' para redirecionar à Landing Page após logout -->
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'bem_vindo' %}"> <!-- CORREÇÃO AQUI -->
+                <button type="submit" 
+                        class="text-gray-400 hover:text-red-500 transition duration-300 text-sm font-medium border border-gray-700 rounded-full px-4 py-1 hover:bg-gray-800">
+                    Sair
+                </button>
+            </form>
+        </header>
+
+        <!-- SEÇÃO 1: PROGRESSO GERAL -->
+        <section class="mb-10 p-6 bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
+            <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
+                <span class="text-orange-500 mr-3">📊</span> Seu Progresso Geral
+            </h2>
+            
+            <p class="text-gray-300 text-lg mb-4">
+                Você concluiu <strong class="text-orange-400">{{ licoes_concluidas }}</strong> de <strong class="text-white">{{ total_licoes }}</strong> lições.
+            </p>
+            
+            <!-- Barra de Progresso Estilizada -->
+            <div class="w-full bg-gray-700 rounded-full h-8 shadow-inner overflow-hidden">
+                <div style="width: {{ porcentagem_progresso|floatformat:'0' }}%;" 
+                     class="h-full bg-green-600 flex items-center justify-end pr-3 transition-all duration-700 ease-out 
+                            {% if porcentagem_progresso > 0 %} text-white {% else %} text-transparent {% endif %}">
+                    <span class="text-sm font-bold">{{ porcentagem_progresso|floatformat:'0' }}%</span>
+                </div>
+            </div>
+            
+            <!-- Mensagem de motivação/conclusão -->
+            {% if porcentagem_progresso == 100 %}
+                <p class="mt-4 text-center text-green-400 font-bold text-xl">
+                    🎉 PARABÉNS! Você concluiu 100% da trilha!
+                </p>
+            {% elif porcentagem_progresso > 0 %}
+                <p class="mt-4 text-center text-orange-400 font-medium">
+                    Continue o ótimo trabalho para dominar a trilha!
+                </p>
+            {% endif %}
+
+        </section>
+
+        <!-- SEÇÃO 2: DETALHES DA TRILHA E CTA -->
+        <section>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center border-b border-gray-700 pb-3">
+                <span class="text-orange-500 mr-3">📚</span> Status das Lições Recentes
+            </h2>
+            
+            <!-- Botão CTA Principal - Laranja Vibrante -->
+            <a href="{% url 'lessons:lista_licoes' %}" class="inline-block mb-8">
+                <button class="px-8 py-3 text-lg font-bold bg-orange-600 text-white rounded-lg shadow-xl 
+                               shadow-orange-600/50 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01] flex items-center">
+                    Acessar Todas as Lições →
+                </button>
             </a>
             
-            {% if li.concluida %}
-                <span style="color: green; font-weight: bold;">[CONCLUÍDO] ✅</span>
-            {% else %}
-                <span style="color: red;">[PENDENTE] ⏳</span>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>Nenhuma lição cadastrada ainda. Por favor, adicione conteúdo no Admin.</li>
-    {% endfor %}
-    </ul>
+            <!-- Lista de Lições -->
+            <div class="space-y-3">
+                {% for li in progresso_licoes %}
+                    <a href="{% url 'lessons:licao_detalhe' slug=li.slug %}" 
+                       class="flex justify-between items-center p-4 bg-gray-800 rounded-lg border border-gray-700 transition duration-300 hover:bg-gray-700">
+                        
+                        <!-- Detalhes da Lição -->
+                        <div class="flex items-center space-x-3">
+                            <span class="text-orange-500 text-xl">
+                                {% if li.concluida %}✅{% else %}⏳{% endif %}
+                            </span>
+                            <div>
+                                <strong class="text-white text-lg hover:text-orange-300">{{ li.titulo }}</strong>
+                                <!-- Badge de Tipo de Lição -->
+                                <span class="ml-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium 
+                                             {% if li.tipo == 'video' %}bg-blue-900/50 text-blue-400 
+                                             {% elif li.tipo == 'codigo' %}bg-yellow-900/50 text-yellow-400 
+                                             {% else %}bg-gray-700 text-gray-400{% endif %}">
+                                    {{ li.tipo|upper }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status de Conclusão -->
+                        <span class="text-sm font-semibold 
+                                     {% if li.concluida %}text-green-400 border border-green-600/50 px-3 py-1 rounded-full bg-green-900/30 
+                                     {% else %}text-red-400 border border-red-600/50 px-3 py-1 rounded-full bg-red-900/30{% endif %}">
+                            {% if li.concluida %}CONCLUÍDO{% else %}PENDENTE{% endif %}
+                        </span>
+                    </a>
+                {% empty %}
+                    <div class="p-4 bg-gray-800 rounded-lg text-center border border-gray-700">
+                        <p class="text-gray-400">Nenhuma lição cadastrada ainda. Por favor, adicione conteúdo no Admin.</p>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </section>
+
+    </div> 
     
-    <hr>
-    <p><a href="{% url 'logout' %}">Sair da Conta</a></p>
+    <!-- Rodapé e Direitos Autorais -->
+    <div class="mt-12 pt-6 border-t border-gray-700 text-center">
+        <p class="text-gray-500 text-sm">© 2025 CodeGuardia. Todos os direitos reservados.</p>
+    </div>
 </body>
 </html>

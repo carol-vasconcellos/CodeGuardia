@@ -1,28 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>Bem-Vindo ao freeCodeCamp Clone</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-Vindo | Plataforma de Cursos Tech</title>
+    <!-- Carrega o Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Efeito de brilho sutil para a seção de ícones */
+        .feature-card:hover {
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4); /* orange-600 sombra */
+        }
+    </style>
 </head>
-<body>
-    <h1>{{ mensagem }}</h1>
-    <p>Sua plataforma gratuita para aprender desenvolvimento web com Python.</p>
-    
-    <hr>
-    
-    <a href="{% url botao_url %}">
-        <button style="padding: 15px 30px; font-size: 18px; cursor: pointer; background-color: #008CBA; color: white; border: none;">
-            {{ botao_texto }}
-        </button>
-    </a>
-    
-    {% if request.user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" 
-                    style="background: none; border: none; padding: 0; color: blue; text-decoration: underline; cursor: pointer; margin-top: 15px;">
-                Sair
-            </button>
-        </form>
-    {% endif %}
+<!-- Corpo Principal: Fundo quase preto (900) e texto suave (100) -->
+<body class="bg-gray-900 text-gray-100 p-4 sm:p-8">
+
+    <!-- Container centralizado e com margens -->
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Header e Opções de Usuário -->
+        <header class="flex justify-end items-center mb-12 h-10">
+            {% if request.user.is_authenticated %}
+                <!-- Botão Sair - Discreto no canto, mas visível -->
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="text-gray-400 hover:text-orange-500 transition duration-300 text-sm font-medium border border-gray-700 rounded-full px-4 py-1 hover:bg-gray-800">
+                        Sair (Logout)
+                    </button>
+                </form>
+            {% endif %}
+        </header>
+
+        <!-- SEÇÃO HERO - Destaque Principal -->
+        <section class="text-center py-12 sm:py-20 border-b border-orange-600/30 mb-12">
+            
+            <!-- Título Chamativo CORRIGIDO: Maior e com espaçamento (mb-6) -->
+            <h1 class="text-6xl sm:text-8xl font-extrabold leading-tight mb-6">
+                <!-- Aumentado para text-6xl / sm:text-8xl e adicionado mb-6 -->
+                <span class="text-white block">{{ mensagem | upper }}</span>
+                <span class="text-orange-600 block text-4xl sm:text-6xl mt-2">SEU FUTURO TECH.</span>
+            </h1>
+            
+            <!-- Subtítulo -->
+            <p class="text-xl sm:text-2xl text-gray-400 max-w-2xl mx-auto mb-10">
+                Sua plataforma gratuita para dominar o Python, desenvolvimento web, redes e cibersegurança. Aprenda na prática, no seu tempo.
+            </p>
+            
+            <!-- Botão Call to Action (CTA) Principal - Laranja Vibrante -->
+            <a href="{% url botao_url %}" class="inline-block">
+                <button class="px-10 py-4 text-xl sm:text-2xl font-bold bg-orange-600 text-white rounded-xl shadow-xl 
+                               shadow-orange-600/50 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.03]">
+                    {{ botao_texto | upper }}
+                </button>
+            </a>
+            
+        </section>
+
+        <!-- SEÇÃO DE RECURSOS / ÁREAS DE CURSO -->
+        <section class="py-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-10 text-center">O que você vai <span class="text-orange-500">Dominar</span></h2>
+            
+            <!-- Grid Responsivo para os Cards de Funcionalidades -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Card 1: Python -->
+                <div class="feature-card p-6 bg-gray-800 rounded-xl border border-gray-700 transition duration-300 hover:border-orange-600/70">
+                    <div class="p-3 w-min mx-auto bg-orange-600 rounded-full mb-4">
+                        <!-- Icone de Terminal/Código para Python -->
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2 text-center">Python Avançado</h3>
+                    <p class="text-gray-400 text-center text-sm">Aprenda a linguagem mais versátil do mercado, do básico à construção de APIs robustas.</p>
+                </div>
+
+                <!-- Card 2: Desenvolvimento Web -->
+                <div class="feature-card p-6 bg-gray-800 rounded-xl border border-gray-700 transition duration-300 hover:border-orange-600/70">
+                    <div class="p-3 w-min mx-auto bg-orange-600 rounded-full mb-4">
+                        <!-- Icone de Web/Browser -->
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9h-3M3 12a9 9 0 019-9m-9 9h3m-6 3h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2 text-center">Desenvolvimento Web</h3>
+                    <p class="text-gray-400 text-center text-sm">Construa aplicações modernas e responsivas usando Django, HTML, CSS e JavaScript.</p>
+                </div>
+
+                <!-- Card 3: Redes de Computadores -->
+                <div class="feature-card p-6 bg-gray-800 rounded-xl border border-gray-700 transition duration-300 hover:border-orange-600/70">
+                    <div class="p-3 w-min mx-auto bg-orange-600 rounded-full mb-4">
+                        <!-- Icone de Rede/Conexão -->
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.626C4.809 15.601 5 14.2 5 13c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2 text-center">Redes de Computadores</h3>
+                    <p class="text-gray-400 text-center text-sm">Entenda protocolos, topologias e aprenda a automatizar tarefas de rede com Python.</p>
+                </div>
+
+                <!-- Card 4: Cibersegurança -->
+                <div class="feature-card p-6 bg-gray-800 rounded-xl border border-gray-700 transition duration-300 hover:border-orange-600/70">
+                    <div class="p-3 w-min mx-auto bg-orange-600 rounded-full mb-4">
+                        <!-- Icone de Lock/Cadeado para Segurança -->
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12V8a3 3 0 016 0v4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2 text-center">Cibersegurança</h3>
+                    <p class="text-gray-400 text-center text-sm">Proteja aplicações e dados. Aprenda sobre testes de penetração e defesa digital.</p>
+                </div>
+                
+            </div>
+        </section>
+        
+        <!-- Linha divisória para o rodapé -->
+        <div class="mt-12 pt-6 border-t border-gray-700 text-center">
+            <p class="text-gray-500 text-sm">© 2025 CodeGuardia. Todos os direitos reservados.</p>
+        </div>
+
+    </div>
 </body>
 </html>
