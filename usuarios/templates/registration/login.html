@@ -51,30 +51,44 @@ border: 1px solid #374151; /* gray-700 */
  
 <!-- Formulário (Usando campos simulados para visualização) -->
  <form method="post" class="login-form">
+    {% csrf_token %}
+    <p>
+        <label for="id_username">Nome de usuário:</label>
+        <input type="text" name="username" id="id_username" placeholder="Seu nome de usuário ou email">
+    </p>
+    <p>
+        <label for="id_password">Senha:</label>
+        <input type="password" name="password" id="id_password" placeholder="Sua senha secreta">
+    </p>
+    
+    {% if form.errors %}
+    <div class="bg-red-600 text-white p-2 rounded mb-4">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
 
- {% comment %} {% csrf_token %} {% endcomment %}
-<p>
- <label for="id_username">Nome de usuário:</label>
- <input type="text" name="username" id="id_username" placeholder="Seu nome de usuário ou email">
- </p>
- <p>
- <label for="id_password">Senha:</label>
- <input type="password" name="password" id="id_password" placeholder="Sua senha secreta">
- </p>
- 
- <!-- O LINK PARA RECUPERAÇÃO DE SENHA JÁ ESTÁ CORRETO -->
- <div class="text-right text-sm mb-4">
-<a href="{% url 'password_reset' %}" class="text-gray-400 hover:text-orange-500 transition duration-300">
- Esqueceu sua senha?
- </a>
+    <!-- Link para recuperação de senha -->
+    <div class="text-right text-sm mb-4">
+        <a href="{% url 'password_reset' %}" class="text-gray-400 hover:text-orange-500 transition duration-300">
+            Esqueceu sua senha?
+        </a>
+    </div>
 
- <!-- Botão Entrar -->
- <button type="submit" 
- class="w-full py-3 font-bold text-lg bg-orange-600 text-white rounded-lg shadow-lg 
- shadow-orange-600/30 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01]">
- Entrar
- </button>
- </form>
+    <!-- Botão Entrar -->
+    <button type="submit" 
+        class="w-full py-3 font-bold text-lg bg-orange-600 text-white rounded-lg shadow-lg 
+        shadow-orange-600/30 hover:bg-orange-500 transition duration-300 transform hover:scale-[1.01]">
+        Entrar
+    </button>
+</form>
+
  
  <!-- Rodapé e Link de Cadastro -->
  <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">

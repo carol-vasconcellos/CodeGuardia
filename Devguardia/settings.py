@@ -22,7 +22,7 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # Se a variável do Render não existir (ou seja, estamos rodando localmente), DEBUG é True
 DEBUG = not bool(RENDER_EXTERNAL_HOSTNAME)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://codeguardia.onrender.com']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "codeguardia.onrender.com"]
 
 if RENDER_EXTERNAL_HOSTNAME:
     # Em produção, permitimos o hostname do Render
@@ -142,9 +142,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Redirecionamento de Auth
-LOGIN_REDIRECT_URL = "/bem-vindo/" 
-LOGOUT_REDIRECT_URL = "/"
+# URL para onde usuários não autenticados serão redirecionados
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/bem-vindo/'
+
+# URL para onde o LogoutView deve redirecionar
+LOGOUT_REDIRECT_URL = '/login/'  # ou reverse_lazy('login')
 
 # 🌟 CONFIGURAÇÕES SMTP PARA ENVIO REAL 🌟
 # Altere para 'django.core.mail.backends.smtp.EmailBackend' para enviar de verdade.
