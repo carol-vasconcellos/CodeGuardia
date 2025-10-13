@@ -22,7 +22,7 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # Se a variável do Render não existir (ou seja, estamos rodando localmente), DEBUG é True
 DEBUG = not bool(RENDER_EXTERNAL_HOSTNAME)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://codeguardia.onrender.com']
 
 if RENDER_EXTERNAL_HOSTNAME:
     # Em produção, permitimos o hostname do Render
@@ -98,6 +98,7 @@ CSRF_TRUSTED_ORIGINS = [
     # Adicionamos a versão HTTPS localmente, caso o navegador a use
     'https://localhost:8000', 
     'https://127.0.0.1:8000', 
+    'https://codeguardia.onrender.com'
 ]
 
 if RENDER_EXTERNAL_HOSTNAME:
