@@ -61,12 +61,25 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Devguardia.urls'
 
+# ... em Devguardia/settings.py
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # 🌟 importante!
-        'APP_DIRS': True,
+        # VAMOS TROCAR A ORDEM! O Django 5.2 prioriza o 'DIRS'.
+        # Para forçar, vamos tentar o inverso (que às vezes funciona como hack).
+
+        # Opção 1: Deixar DIRS como primeiro, mas garantir que seus templates estão corretos
+        # (O que já fizemos, e falhou)
+        
+        # OPÇÃO 2: TENTATIVA DE FORÇA BRUTA (Mais recomendada para esse bug)
+        'DIRS': [BASE_DIR / 'templates'], 
+        'APP_DIRS': True, # Mantenha o APP_DIRS, mas vamos assumir que o problema é a herança.
+        
         'OPTIONS': {
+            # Se você usar 'loaders', ele anula o APP_DIRS. Isso é complexo demais.
+            # Vamos manter a estrutura, mas CONFIRMAR O TEMPLATE BASE!
+            
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -76,6 +89,7 @@ TEMPLATES = [
     },
 ]
 
+# ...
 
 WSGI_APPLICATION = 'Devguardia.wsgi.application'
 
