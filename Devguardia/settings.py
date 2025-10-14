@@ -47,12 +47,17 @@ INSTALLED_APPS = [
 SITE_ID = 3 # Essencial para criar o domínio do link de reset
 USE_SITES = False
 
+# settings.py (ou seu arquivo de produção)
+
+# 1. Informa ao Django para confiar no cabeçalho do proxy (Render)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Garanta que estes também estejam ativos em Produção (eles dependem do proxy header acima):
-SECURE_SSL_REDIRECT = True
+# 2. Garante que os cookies críticos só sejam enviados via HTTPS
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+# 3. Garante que qualquer requisição acidental HTTP seja redirecionada para HTTPS
+SECURE_SSL_REDIRECT = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
