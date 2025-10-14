@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 # O Django precisa de um e-mail padrão para enviar as mensagens
-SITE_ID = 2 # Essencial para criar o domínio do link de reset
+SITE_ID = 1 # Essencial para criar o domínio do link de reset
 USE_SITES = False
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
