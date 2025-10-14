@@ -174,7 +174,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # URL para onde usuários não autenticados serão redirecionados
 LOGIN_URL = '/login/'
 
-LOGIN_REDIRECT_URL = '/bem-vindo/'
+LOGIN_REDIRECT_URL = '/'
 
 # URL para onde o LogoutView deve redirecionar
 LOGOUT_REDIRECT_URL = '/login/'  # ou reverse_lazy('login')
