@@ -11,3 +11,4 @@ psycopg2-binary>=2.9,<3.0    # Driver para conexão com PostgreSQL
 # Pacotes de Produção/Deploy
 gunicorn>=21.2,<22.0        # Servidor WSGI
 whitenoise>=6.6,<7.0        # Para servir arquivos estáticos em produção (modificado em settings.py)
+celery>=5.5.3

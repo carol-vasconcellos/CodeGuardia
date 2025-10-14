@@ -1,5 +1,5 @@
 from django.urls import path, reverse_lazy 
-from . import views
+from . import views # Importa as views do seu app (incluindo a CustomPasswordResetView)
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -24,9 +24,11 @@ urlpatterns = [
     ),
 
     # 🌟 Reset de senha (4 etapas)
+    # --------------------------------------------------------
+    # CORREÇÃO CRÍTICA: USAR A VIEW CUSTOMIZADA DO CELERY
     path(
         'password_reset/', 
-        auth_views.PasswordResetView.as_view(
+        views.CustomPasswordResetView.as_view( # <--- AGORA USA A SUA CLASSE
             template_name='registration/reset_password_request.html',
             email_template_name='registration/password_reset_email.html',
             subject_template_name='registration/password_reset_subject.txt',
@@ -34,6 +36,7 @@ urlpatterns = [
         ), 
         name='password_reset'
     ),
+    # --------------------------------------------------------
     path(
         'password_reset/done/', 
         auth_views.PasswordResetDoneView.as_view(

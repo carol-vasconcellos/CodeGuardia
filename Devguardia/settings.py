@@ -43,6 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.sites', # MANTER: Essencial para o password reset
 ]
 
+# Devguardia/__init__.py
+
+from .celery import app as celery_app
+
+__all__ = ('celery_app',)
+
 # O Django precisa de um e-mail padrão para enviar as mensagens
 SITE_ID = 3 # Essencial para criar o domínio do link de reset
 USE_SITES = False
