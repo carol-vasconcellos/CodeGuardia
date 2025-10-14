@@ -171,6 +171,7 @@ LOGOUT_REDIRECT_URL = '/login/'  # ou reverse_lazy('login')
 # Altere para 'django.core.mail.backends.smtp.EmailBackend' para enviar de verdade.
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend') 
 
+
 # Credenciais lidas do .env
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
