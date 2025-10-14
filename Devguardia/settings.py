@@ -43,12 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sites', # MANTER: Essencial para o password reset
 ]
 
-# Devguardia/__init__.py
-
-from .celery import app as celery_app
-
-__all__ = ('celery_app',)
-
 # O Django precisa de um e-mail padrão para enviar as mensagens
 SITE_ID = 3 # Essencial para criar o domínio do link de reset
 USE_SITES = False
@@ -136,9 +130,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://codeguardia.onrender.com'
 ]
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
 
 if RENDER_EXTERNAL_HOSTNAME:
     # Para produção no Render (usando HTTPS)
