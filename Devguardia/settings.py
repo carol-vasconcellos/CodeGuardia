@@ -130,6 +130,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://codeguardia.onrender.com'
 ]
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+
 if RENDER_EXTERNAL_HOSTNAME:
     # Para produção no Render (usando HTTPS)
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
