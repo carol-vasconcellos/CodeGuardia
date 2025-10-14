@@ -38,11 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # REMOVIDA DUPLICATA: Você tinha 'django.contrib.sites' aqui e de novo abaixo.
     'usuarios.apps.UsuariosConfig',
     'lessons.apps.LessonsConfig',
     'django.contrib.sites', # MANTER: Essencial para o password reset
 ]
+
+# O Django precisa de um e-mail padrão para enviar as mensagens
+SITE_ID = 1 # Essencial para criar o domínio do link de reset
+USE_SITES = False
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -176,5 +179,3 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'no-reply@codeguardia.com')
 
-# O Django precisa de um e-mail padrão para enviar as mensagens
-SITE_ID = 1 # Essencial para criar o domínio do link de reset
