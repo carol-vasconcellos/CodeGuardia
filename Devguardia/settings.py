@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 SITE_ID = 3 # Essencial para criar o domínio do link de reset
 USE_SITES = False
 
+
 # settings.py (ou seu arquivo de produção)
 
 # 1. Informa ao Django para confiar no cabeçalho do proxy (Render)
@@ -191,5 +192,5 @@ EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'no-reply@codeguardia.com')
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend') 
 
