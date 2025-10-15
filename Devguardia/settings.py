@@ -199,5 +199,8 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_USE_SSL = False # Confirma que estamos usando TLS (Porta 587)
 EMAIL_TIMEOUT = 10    # Define um timeout de 10 segundos para a conexão SMTP
 # 🌟
+# 🌟 DÁ 3 DIAS PARA O LINK EXPIRAR (o padrão é 1 dia, mas confirme)
+PASSWORD_RESET_TIMEOUT_DAYS = 1
+
 
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'no-reply@codeguardia.com')
