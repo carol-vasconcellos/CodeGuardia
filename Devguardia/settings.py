@@ -187,10 +187,17 @@ EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.conso
 
 
 # Credenciais lidas do .env
+# Em Devguardia/settings.py (na seção de Email)
+
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend') 
 
+# 🌟 Adicione/Confirme estas duas linhas: 🌟
+EMAIL_USE_SSL = False # Confirma que estamos usando TLS (Porta 587)
+EMAIL_TIMEOUT = 10    # Define um timeout de 10 segundos para a conexão SMTP
+# 🌟
+
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'no-reply@codeguardia.com')
