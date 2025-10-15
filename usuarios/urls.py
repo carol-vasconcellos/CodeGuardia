@@ -44,16 +44,16 @@ urlpatterns = [
     path(
         'reset/<uidb64>/<token>/', 
         auth_views.PasswordResetConfirmView.as_view(
-            template_name='registration/password_reset_confirm.html', 
+            template_name='registration/password_reset_complete.html', 
             success_url=reverse_lazy('password_reset_complete') 
         ), 
-        name='password_reset_confirm'
+        name='password_reset_complete'
     ),
     path(
         'reset/done/', 
         auth_views.PasswordResetCompleteView.as_view(
-            template_name='registration/password_reset_complete.html' 
+            template_name='registration/password_reset_confirm.html' 
         ), 
-        name='password_reset_complete'
+        name='password_reset_confirm'
     ),
 ]
