@@ -12,21 +12,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-^+vfn6l&p-d6ut1o!(@-i^4fu=9pw4krj_45+kbl3b-yo(wyto')
+# 🚨 MELHORIA DE SEGURANÇA: A CHAVE SECRETA PADRÃO FOI REMOVIDA para forçar o uso de variável de ambiente em Prod.
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-
-# 🌟 Lógica robusta para DEBUG e ALLOWED_HOSTS 🌟
+# Lógica para forçar a falha no deploy se a SECRET_KEY faltar em produção
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
 # Se a variável do Render não existir (ou seja, estamos rodando localmente), DEBUG é True
 DEBUG = not bool(RENDER_EXTERNAL_HOSTNAME)
+
+if not SECRET_KEY and not DEBUG:
+    # Levanta um erro se estiver em 'produção' (não-DEBUG) e a chave secreta não estiver definida
+    raise EnvironmentError("A variável SECRET_KEY é obrigatória para ambientes de produção.")
+
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "codeguardia.onrender.com"]
 
 if RENDER_EXTERNAL_HOSTNAME:
     # Em produção, permitimos o hostname do Render
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME) 
+# Garante que o domínio principal de produção esteja sempre na lista
 ALLOWED_HOSTS.append('codeguardia.onrender.com') 
 
 
@@ -60,7 +65,21 @@ SESSION_COOKIE_SECURE = True
 # 3. Garante que qualquer requisição acidental HTTP seja redirecionada para HTTPS
 SECURE_SSL_REDIRECT = True
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# 🔒 MELHORIA DE DEVOSECOPS: HTTP Strict Transport Security (HSTS)
+# Força o navegador a usar apenas HTTPS após a primeira visita (1 ano de duração)
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True 
+
+# 🔒 MELHORIA DE DEVOSECOPS: Proteção contra MIME type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# 🔒 MELHORIA DE DEVOSECOPS: CONFIGURAÇÃO DE TEMPO LIMITE DE INATIVIDADE (SESSION TIMEOUT)
+# A sessão expira após 600 segundos (10 minutos)
+SESSION_COOKIE_AGE = 600 # 10 minutos * 60 segundos
+# O tempo é reiniciado a cada request (inativa por 10 minutos = desloga)
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,10 +159,13 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
+        # Impede que o usuário use atributos como 'username' ou 'email' na senha.
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
+        # 🔒 AJUSTE DE SEGURANÇA: Define o comprimento mínimo da senha para 12 caracteres.
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 12}, 
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -151,6 +173,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    # Os validadores de complexidade estrita foram removidos para garantir mais "soltura" ao usuário.
 ]
 
 
